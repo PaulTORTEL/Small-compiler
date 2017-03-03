@@ -1,11 +1,16 @@
 #ifndef ANALYSER_H
 #define ANALYSER_H
-
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <map>
 
 class Analyser
 {
 
     private:
+
+    std::map<std::string, std::vector<std::string> > _grammar;
 
     public:
         Analyser();

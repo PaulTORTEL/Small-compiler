@@ -1,7 +1,5 @@
 #include "Analyser.h"
-#include <iostream>
-#include <fstream>
-#include <string>
+
 
 bool Analyser::readGrammar(const char* filename)
 {
@@ -9,7 +7,7 @@ bool Analyser::readGrammar(const char* filename)
 
     for( std::string line; getline( input, line ); )
     {
-
+        std::cout << line << std::endl;
     }
 
     input.close();
