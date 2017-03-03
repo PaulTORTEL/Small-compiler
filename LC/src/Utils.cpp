@@ -1,7 +1,6 @@
 #include "Utils.h"
 
 
-
 bool parseNumber(const char* s, int* i) {
 
     char* p;

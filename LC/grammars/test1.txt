@@ -1,3 +1,4 @@
-E = E ou T | T
+E = E ou S | T | F
 T = T et F | F
 F = !F | (E) | vrai | faux
+A = A | B | |
