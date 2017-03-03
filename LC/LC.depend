@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # depslib dependency file v1.0
 1488548510 source:d:\dev\c++\lc\l-c\lc\src\analyser.cpp
 	"Analyser.h"
@@ -27,3 +28,39 @@
 1488393346 source:d:\dev\c++\lc\l-c\lc\src\utils.cpp
 	"Utils.h"
 
+=======
+# depslib dependency file v1.0
+1488548510 source:d:\dev\c++\lc\l-c\lc\src\analyser.cpp
+	"Analyser.h"
+
+1488548723 d:\dev\c++\lc\l-c\lc\src\analyser.h
+
+1488549768 source:d:\dev\c++\lc\l-c\lc\src\main.cpp
+	<iostream>
+	"Analyser.h"
+
+1488549496 source:d:\paul\documents\travail\l3\langage et compilation\projet\l-c\lc\src\analyser.cpp
+	"Analyser.h"
+
+1488551487 d:\paul\documents\travail\l3\langage et compilation\projet\l-c\lc\src\analyser.h
+	<iostream>
+	<fstream>
+	<string>
+	<map>
+	"Symbol.h"
+
+1488551520 d:\paul\documents\travail\l3\langage et compilation\projet\l-c\lc\include\symbol.h
+	<vector>
+	<string>
+
+1488550028 source:d:\paul\documents\travail\l3\langage et compilation\projet\l-c\lc\src\main.cpp
+	<iostream>
+	"Analyser.h"
+
+1488550028 source:d:\paul\documents\travail\l3\langage et compilation\projet\l-c\lc\src\parser.cpp
+	"Analyser.h"
+
+1488550951 source:d:\paul\documents\travail\l3\langage et compilation\projet\l-c\lc\src\symbol.cpp
+	"Symbol.h"
+
+>>>>>>> 9d5c61046abe3a6b0db36618536a9403cb2a84ac
