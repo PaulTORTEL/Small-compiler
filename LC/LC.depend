@@ -2,9 +2,28 @@
 1488548510 source:d:\dev\c++\lc\l-c\lc\src\analyser.cpp
 	"Analyser.h"
 
-1488548723 d:\dev\c++\lc\l-c\lc\src\analyser.h
+1488550838 d:\dev\c++\lc\l-c\lc\src\analyser.h
+	<iostream>
+	<fstream>
+	<string>
+	<map>
 
 1488549768 source:d:\dev\c++\lc\l-c\lc\src\main.cpp
 	<iostream>
 	"Analyser.h"
+
+1488551289 source:d:\dev\c++\lc\l-c\lc\src\parser.cpp
+	"Analyser.h"
+	"Utils.h"
+
+1488393369 d:\dev\c++\lc\l-c\lc\src\utils.h
+	<iostream>
+	<stdexcept>
+	<sstream>
+	<cstdlib>
+	<sstream>
+	<vector>
+
+1488393346 source:d:\dev\c++\lc\l-c\lc\src\utils.cpp
+	"Utils.h"
 

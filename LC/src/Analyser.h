@@ -5,12 +5,14 @@
 #include <string>
 #include <map>
 
+
 class Analyser
 {
 
     private:
 
-    std::map<std::string, std::vector<std::string> > _grammar;
+    /*std::map<std::string, std::vector<std::string> > _grammar;*/
+    std::string _startSymbol;
 
     public:
         Analyser();

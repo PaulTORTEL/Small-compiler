@@ -37,6 +37,8 @@
 		<Unit filename="src/Analyser.cpp" />
 		<Unit filename="src/Analyser.h" />
 		<Unit filename="src/Parser.cpp" />
+		<Unit filename="src/Utils.cpp" />
+		<Unit filename="src/Utils.h" />
 		<Unit filename="src/main.cpp" />
 		<Extensions>
 			<code_completion />
