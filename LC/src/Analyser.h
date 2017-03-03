@@ -4,13 +4,15 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include "Symbol.h"
 
 class Analyser
 {
+    std::string _startSymbol;
 
     private:
 
-    std::map<std::string, std::vector<std::string> > _grammar;
+    std::map<std::string, Symbol*> _grammar;
 
     public:
         Analyser();
