@@ -17,6 +17,27 @@ class Symbol
         Symbol(std::string name);
         ~Symbol();
 
+        void addRule(std::vector<std::string> rule);
+        std::vector<std::string> getFirstSymbolsFromGrammar(const bool finalSymbol); // Récupère les symboles terminaux (si finalSymbol = true) ou les symboles non terminaux ( = false) à partir de la grammaire
+
+        void setFirst(std::vector<std::string> first);
+        void setFollow(std::vector<std::string> follow); // non défini pour le moment
+
+        unsigned int getFirstSize();
+        unsigned int getFollowSize();
+
 };
+
+inline void Symbol::setFirst(std::vector<std::string> first) {
+    _first = first;
+}
+
+inline unsigned int Symbol::getFirstSize() {
+    return _first.size();
+}
+
+inline unsigned int Symbol::getFollowSize() {
+    return _follow.size();
+}
 
 #endif // SYMBOL_H

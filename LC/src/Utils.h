@@ -11,5 +11,6 @@
 bool parseNumber(const char* s, int* i);
 std::vector<std::string>& split(const std::string &s, char delim, std::vector<std::string> &elems);
 std::vector<std::string> split(const std::string &s, char delim);
-
+bool isSymbol(std::string name); // Renvoie true si le symbole est Non Terminal ([A;Z])
+bool contains(const std::vector<std::string>& vec, const std::string s);
 #endif // UTILS_H_INCLUDED
