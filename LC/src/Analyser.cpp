@@ -42,10 +42,10 @@ void Analyser::setAllFirst() {
 
     for (std::map<std::string, Symbol*>::iterator it = _grammar.begin(); it != _grammar.end(); ++it) {
 
-        if (it->second->getFirstSize() == 0) { // Si on n'a pas encore défini les premiers
+        if (it->second->getFirstSize() == 0) { /// Si on n'a pas encore défini les premiers
 
-            std::vector<std::string> first = findAndReturnFirst(it); // On trouve les premiers d'un symbole non terminal
-            it->second->setFirst(first); // On les sauvegarde
+            std::vector<std::string> first = findAndReturnFirst(it); /// On trouve les premiers d'un symbole non terminal
+            it->second->setFirst(first); /// On les sauvegarde
         }
     }
 }
@@ -55,11 +55,11 @@ std::vector<std::string> Analyser::findAndReturnFirst(const std::map<std::string
     std::vector<std::string> finalSymbols = it->second->getFirstSymbolsFromRules(true);
     std::vector<std::string> Symbols = it->second->getFirstSymbolsFromRules(false);
 
-    if (Symbols.size() == 0)  // si les premiers sont uniquement des terminaux
-        return finalSymbols;    // on retourne les terminaux (, + etc)
+    if (Symbols.size() == 0)  /// si les premiers sont uniquement des terminaux
+        return finalSymbols;    /// on retourne les terminaux (, + etc)
 
-    std::vector<std::string> temp; // va récupérer les symboles terminaux renvoyé par la récursion ex : E = T+A => renverra premier(T)
-    std::vector<std::string> first; // va stocker tous les symboles terminaux
+    std::vector<std::string> temp; /// va récupérer les symboles terminaux renvoyé par la récursion ex : E = T+A => renverra premier(T)
+    std::vector<std::string> first; /// va stocker tous les symboles terminaux
 
     for (unsigned int i = 0; i < finalSymbols.size(); i++) {
 
@@ -68,9 +68,9 @@ std::vector<std::string> Analyser::findAndReturnFirst(const std::map<std::string
     }
 
     for (unsigned int i = 0; i < Symbols.size(); i++) {
-        temp = findAndReturnFirst(_grammar.find(Symbols[i])); // On ré appelle la même fonction avec les non terminaux (Premier(E) = Premier(T) donc on envoie T pour calculer ses premiers)
+        temp = findAndReturnFirst(_grammar.find(Symbols[i])); /// On ré appelle la même fonction avec les non terminaux (Premier(E) = Premier(T) donc on envoie T pour calculer ses premiers)
         for (unsigned int i = 0; i < temp.size(); i++) {
-            if (!contains(first, temp[i])) { // Si on n'a pas déjà ajouté ce symbole terminal (, + ou et etc.)
+            if (!contains(first, temp[i])) { /// Si on n'a pas déjà ajouté ce symbole terminal (, + ou et etc.)
                 first.push_back(temp[i]);
             }
         }
