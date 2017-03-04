@@ -16,13 +16,14 @@ class Analyser
     std::string _startSymbol;
 
     std::map<std::string, Symbol*> _grammar;
-
+    std::vector<std::string> _orderedSymbols;
 
     public:
         Analyser();
         virtual ~Analyser();
 
         bool readGrammar(const char* filename);
+        void displayRules();
 
 };
 

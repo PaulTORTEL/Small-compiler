@@ -13,9 +13,14 @@ class Symbol
     std::vector<std::string> _first;
     std::vector<std::string> _follow;
 
+
+
     public:
         Symbol(std::string name);
         ~Symbol();
+
+        void addRule(std::vector<std::string> rule);
+        std::vector<std::vector<std::string> > getGramar() const;
 
 };
 

@@ -6,10 +6,6 @@ bool Analyser::readGrammar(const char* filename)
 {
     std::ifstream input( filename );
 
-    std::map<std::string, Symbol*> tempMap;
-
-
-
     for( std::string line; getline( input, line ); )
     {
         std::vector<std::string> array_line = split(line, '=');
@@ -29,22 +25,18 @@ bool Analyser::readGrammar(const char* filename)
             return false;
         }
 
-        std::cout << "Symbole : " << left[0] << std::endl ;
-
         std::vector<std::string> right = split(array_line[1], ' ');
 
 
         std::vector<std::vector<std::string> > rules;
         std::vector<std::string> temp_rules;
 
-        std::cout << " - Regles : " << std::endl;
-        std::cout << "  => ";
+
         for (unsigned int i = 1; i < right.size(); i++)
         {
             if (right[i] != "|")
             {
                 temp_rules.push_back(right[i]);
-                std::cout << right[i] << "  ";
             }
             else
             {
@@ -56,7 +48,6 @@ bool Analyser::readGrammar(const char* filename)
                 }
                 rules.push_back(clone);
                 temp_rules.clear();
-                std::cout << std::endl << "  => ";
             }
         }
 
@@ -74,12 +65,15 @@ bool Analyser::readGrammar(const char* filename)
             return false;
         }
 
-        std::cout << std::endl;
 
+
+        std::cout << "==== Lecture de [ " << left[0] << " ] ====" << std::endl;
 
         if (rules[0][0] == left[0] && rules[0].size() != 1)
         {
             std::cout << "Recursivite a gauche detectee!" << std::endl;
+            std::cout << "Les regles du symbole [ " << left[0] << " ] seront modifiees." << std::endl;
+            std::cout << "Le symbole [ " << left[0] << "' ] sera cree." << std::endl;
 
             if (rules.size() == 1)
             {
@@ -97,9 +91,9 @@ bool Analyser::readGrammar(const char* filename)
             cloned_first_rule.erase(cloned_first_rule.begin() + 0);
 
 
+            Symbol *symb = new Symbol(left[0]);
+            Symbol *new_symb = new Symbol(left[0] + "'");
 
-
-            std::cout << left[0] << " = ";
             for (unsigned int i = 1; i < rules.size(); i++)
             {
                 std::vector<std::string> temp_symb;
@@ -110,11 +104,10 @@ bool Analyser::readGrammar(const char* filename)
                 }
 
                 temp_symb.push_back(left[0] + "'");
-                new_symbol_rules.push_back(temp_symb);
+
+                symb->addRule(temp_symb);
             }
 
-
-            std::cout << left[0] << "' = ";
 
             std::vector<std::string> temp_new_symb_rule_left;
             std::vector<std::string> temp_new_symb_rule_right;
@@ -127,19 +120,35 @@ bool Analyser::readGrammar(const char* filename)
             temp_new_symb_rule_left.push_back(left[0] + "'");
             temp_new_symb_rule_right.push_back("#");
 
+            new_symb->addRule(temp_new_symb_rule_left);
+            new_symb->addRule(temp_new_symb_rule_right);
 
+            _grammar[left[0]] = symb;
+            _orderedSymbols.push_back(left[0]);
 
+            _grammar[left[0] + "'"] = new_symb;
+            _orderedSymbols.push_back(left[0] + "'");
 
         }
         else
         {
 
+            std::cout << "Pas de recursivite a gauche detectee." << std::endl;
+
             Symbol *symb = new Symbol(left[0]);
-            tempMap[left[0]] = new Symbol(left[0]);
+
+            for (unsigned int i = 0; i < rules.size(); i++)
+            {
+                symb->addRule(rules[i]);
+            }
+
+            _grammar[left[0]] = symb;
+            _orderedSymbols.push_back(left[0]);
 
         }
 
-        std::cout << "----------------------------------" << std::endl;
+        std::cout << "------------------------" << std::endl;
+
 
     }
 
