@@ -6,6 +6,10 @@ using namespace std;
 int main()
 {
     Analyser analyser;
-    analyser.readGrammar("grammars/test1.txt");
+    if (analyser.readGrammar("grammars/test1.txt")) {
+        analyser.displayGrammar();
+        analyser.setAllFirst();
+        analyser.displayFirst();
+    }
     return 0;
 }

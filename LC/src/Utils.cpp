@@ -1,7 +1,6 @@
 #include "Utils.h"
 
 
-
 bool parseNumber(const char* s, int* i) {
 
     char* p;
@@ -33,11 +32,13 @@ std::vector<std::string> split(const std::string &s, char delim)
 
 bool isSymbol(std::string name) {
 
-    for (unsigned int i = 0; i < name.size(); i++) {
-        if (!(name[i] >= 65 && name[i] <= 90)) // Si ce n'est pas un symbole terminal (ce n'est pas un symbole = [A;Z]
+    if (name.size() > 0) {
+        if (!(name[0] >= 65 && name[0] <= 90)) // Si ce n'est pas un symbole terminal (ce n'est pas un symbole = [A;Z]
             return false;
+        else // Si c'est du type : E ou Expreb c'est ok car il y a une majuscule devant
+            return true;
     }
-    return true;
+    return false;
 }
 
 bool contains(const std::vector<std::string>& vec, const std::string s) {
