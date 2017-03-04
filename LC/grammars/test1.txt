@@ -1,3 +1,3 @@
 Expreb = Expreb ou Termeb | Termeb
 Termeb = Termeb et Facteurb | Facteurb
-Facteurb = ! Facteurb | ( E ) | vrai | faux
+Facteurb = ! Facteurb | ( Expreb ) | vrai | faux

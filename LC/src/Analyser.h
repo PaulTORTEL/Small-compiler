@@ -18,7 +18,9 @@ class Analyser
 
     std::map<std::string, Symbol*> _grammar;
 
-    std::vector<std::string> findAndReturnFirst(const std::map<std::string, Symbol*>::iterator it); // retourne la liste de tous les symboles terminaux (utilisé dans la fonction setFirst() )
+    std::vector<std::string> findAndSetFirst(const std::map<std::string, Symbol*>::iterator it); // retourne la liste de tous les symboles terminaux (utilisé dans la fonction setFirst() )
+
+    std::vector<std::string> findAndSetFollow(const std::map<std::string, Symbol*>::iterator it);
 
     std::vector<std::string> _orderedSymbols;
 
@@ -31,9 +33,10 @@ class Analyser
         void displayGrammar();
 
         void setAllFirst(); // Fait appel à findAndReturnFirst
-        void findFollow(); // Non défini
+        void setAllFollow(); // Non défini
 
         void displayFirst();
+        void displayFollow();
 
 
 };

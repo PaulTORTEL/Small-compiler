@@ -46,3 +46,7 @@ std::vector<std::vector<std::string> > Symbol::getRules() const
 std::vector<std::string> Symbol::getFirst() const {
     return _first;
 }
+
+std::vector<std::string> Symbol::getFollow() const {
+    return _follow;
+}

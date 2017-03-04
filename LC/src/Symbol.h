@@ -31,11 +31,16 @@ class Symbol
 
         std::vector<std::vector<std::string> > getRules() const;
         std::vector<std::string> getFirst() const;
+        std::vector<std::string> getFollow() const;
 
 };
 
 inline void Symbol::setFirst(std::vector<std::string> first) {
     _first = first;
+}
+
+inline void Symbol::setFollow(std::vector<std::string> follow) {
+    _follow = follow;
 }
 
 inline unsigned int Symbol::getFirstSize() {
