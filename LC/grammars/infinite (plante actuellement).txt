@@ -1,0 +1,3 @@
+A = T ou U
+T = U | A
+U = A

@@ -1,8 +1,8 @@
-#include "Analyser.h"
+#include "Analyzer.h"
 #include "Utils.h"
 #include "Symbol.h"
 
-bool Analyser::readGrammar(const char* filename)
+bool Analyzer::readGrammar(const char* filename)
 {
     std::ifstream input( filename );
 

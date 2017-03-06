@@ -55,6 +55,10 @@ void Symbol::addIntoTable(std::string index, std::vector<std::string> value) {
     _table[index] = value;
 }
 
-bool Symbol::findIntoTable(std::string index) {
+bool Symbol::isIntoTable(std::string index) {
     return _table.find(index) != _table.end();
+}
+
+std::map<std::string, std::vector<std::string> >::iterator Symbol::findIntoTable(std::string index) {
+    return _table.find(index);
 }

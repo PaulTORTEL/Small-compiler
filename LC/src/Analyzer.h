@@ -7,7 +7,7 @@
 #include "Symbol.h"
 
 
-class Analyser
+class Analyzer
 {
 
     private:
@@ -23,8 +23,8 @@ class Analyser
     std::vector<std::string> findAndSetFollow(const std::map<std::string, Symbol*>::iterator it);
 
     public:
-        Analyser();
-        virtual ~Analyser();
+        Analyzer();
+        virtual ~Analyzer();
 
         bool readGrammar(const char* filename);
         void displayGrammar();
@@ -37,6 +37,9 @@ class Analyser
         void displayFollow();
 
         void displayTable();
+
+        bool analyze(std::string);
+        void analyze_sentences();
 
 
 

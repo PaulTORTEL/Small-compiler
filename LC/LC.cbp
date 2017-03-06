@@ -36,13 +36,13 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="src/Symbol.h" />
-		<Unit filename="src/Analyser.cpp" />
-		<Unit filename="src/Analyser.h" />
+		<Unit filename="src/Analyzer.cpp" />
+		<Unit filename="src/Analyzer.h" />
 		<Unit filename="src/Parser.cpp" />
+		<Unit filename="src/Symbol.cpp" />
+		<Unit filename="src/Symbol.h" />
 		<Unit filename="src/Utils.cpp" />
 		<Unit filename="src/Utils.h" />
-		<Unit filename="src/Symbol.cpp" />
 		<Unit filename="src/main.cpp" />
 		<Extensions>
 			<code_completion />

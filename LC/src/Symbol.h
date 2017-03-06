@@ -38,7 +38,8 @@ class Symbol
         std::vector<std::string> getFollow() const;
 
         void addIntoTable(std::string index, std::vector<std::string> value);
-        bool findIntoTable(std::string index);
+        bool isIntoTable(std::string index);
+        std::map<std::string, std::vector<std::string> >::iterator findIntoTable(std::string index);
 
         std::map<std::string, std::vector<std::string> >::iterator getTableBegin();
         std::map<std::string, std::vector<std::string> >::iterator getTableEnd();
