@@ -246,10 +246,46 @@ void Analyzer::displayTable() {
      }
 }
 
+std::vector<std::string> Analyzer::split_words(std::string sentence){
+
+    std::vector<std::string> returned_vector;
+    unsigned int i=0;
+    std::string temp;
+
+    while(i < sentence.length()){ //On parcoure la chaîne de caractère
+
+        if((sentence[i] < 90 && sentence[i] > 65)||(sentence[i] > 96 && sentence[i] < 122)){ //si c'est une lettre, on le met dans la string temporaire
+            temp += sentence[i];
+        }
+        else if (sentence[i] == ' '){ //si c'est un espace, alors le mot est fini et on le stocke dans le vecteur
+            if(!temp.empty())
+                returned_vector.push_back(temp);
+            temp.clear();
+        }
+        else{ //si c'est un caractère spécial comme: ( , ) , ! , : ...
+            if(!temp.empty()){ //si le vecteur n'est pas vide, on enregiste le mot avant de le supprimer de la chaîne de caractère
+                returned_vector.push_back(temp);
+                temp.clear();
+            }
+            temp += sentence[i];
+            returned_vector.push_back(temp); //puis on stocke le caractère spécial dans le vecteur
+            temp.clear();
+        }
+        i++;
+    }
+    return returned_vector; //on retourne le vecteur
+}
+
+
 bool Analyzer::analyze(std::string sentence) {
 
     sentence += " $"; // On met à la fin du mot $ pour indiquer la fin de la phrase
-    std::vector<std::string> splited_sentence = split(sentence, ' ');
+    ///std::vector<std::string> splited_sentence = split(sentence, ' ');
+    std::vector<std::string> splited_sentence = split_words(sentence);
+    std::cout << "phrase : ";
+    for(unsigned int i=0; i < splited_sentence.size();i++){
+        std::cout << splited_sentence[i] << " ";
+    }
 
     std::stack<std::string> stack;
     stack.push("$");
@@ -286,6 +322,8 @@ bool Analyzer::analyze(std::string sentence) {
                         }
                     }
                 }
+                else
+                    return false;
             }
             else { // C'est un terminal
                 if (stack.top() == splited_sentence[0]) { // Portion reconnue

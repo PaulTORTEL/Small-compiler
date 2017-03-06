@@ -19,8 +19,10 @@ class Analyzer
     std::map<std::string, Symbol*> _grammar;
     std::vector<std::string> _orderedSymbols;
 
-    std::vector<std::string> findAndSetFirst(const std::map<std::string, Symbol*>::iterator it); // retourne la liste de tous les symboles terminaux (utilisÃ© dans la fonction setFirst() )
+    std::vector<std::string> findAndSetFirst(const std::map<std::string, Symbol*>::iterator it); // retourne la liste de tous les symboles terminaux (utilisé dans la fonction setFirst() )
     std::vector<std::string> findAndSetFollow(const std::map<std::string, Symbol*>::iterator it);
+
+    std::vector<std::string> split_words(std::string sentence);
 
     public:
         Analyzer();
@@ -29,9 +31,9 @@ class Analyzer
         bool readGrammar(const char* filename);
         void displayGrammar();
 
-        void setAllFirst(); // Fait appel Ã  findAndReturnFirst
-        void setAllFollow(); // Non dÃ©fini
-        void createTable(); // CrÃ©Ã© la table de l'analyseur qui servira Ã  la dÃ©tection d'un mot
+        void setAllFirst(); // Fait appel à findAndReturnFirst
+        void setAllFollow(); // Non défini
+        void createTable(); // Créé la table de l'analyseur qui servira à la détection d'un mot
 
         void displayFirst();
         void displayFollow();
@@ -40,6 +42,8 @@ class Analyzer
 
         bool analyze(std::string);
         void analyze_sentences();
+
+
 
 
 
