@@ -159,12 +159,14 @@ void Analyser::displayFirst() {
     std::cout << std::endl;
     for (unsigned int i = 0; i < _orderedSymbols.size(); i++) {
         std::map<std::string, Symbol*>::iterator it = _grammar.find(_orderedSymbols[i]);
-        std::cout << it->first << " a pour premier : ";
-        std::vector<std::string> vec = it->second->getFirst();
-        for (unsigned int i = 0; i < it->second->getFirstSize(); i++)
-            std::cout << vec[i] << " " ;
+        if (it != _grammar.end()) {
+            std::cout << it->first << " a pour premier : ";
+            std::vector<std::string> vec = it->second->getFirst();
+            for (unsigned int i = 0; i < it->second->getFirstSize(); i++)
+                std::cout << vec[i] << " " ;
 
-        std::cout << std::endl << std::endl;
+            std::cout << std::endl << std::endl;
+        }
     }
 
 }
@@ -174,12 +176,72 @@ void Analyser::displayFollow() {
     std::cout << std::endl;
     for (unsigned int i = 0; i < _orderedSymbols.size(); i++) {
         std::map<std::string, Symbol*>::iterator it = _grammar.find(_orderedSymbols[i]);
-        std::cout << it->first << " a pour suivant : ";
-        std::vector<std::string> vec = it->second->getFollow();
-        for (unsigned int i = 0; i < it->second->getFollowSize(); i++)
-            std::cout << vec[i] << " " ;
+        if (it != _grammar.end()) {
+            std::cout << it->first << " a pour suivant : ";
+            std::vector<std::string> vec = it->second->getFollow();
+            for (unsigned int i = 0; i < it->second->getFollowSize(); i++)
+                std::cout << vec[i] << " " ;
 
-        std::cout << std::endl << std::endl;
+            std::cout << std::endl << std::endl;
+        }
     }
+}
 
+void Analyser::createTable() {
+
+    for (std::map<std::string, Symbol*>::iterator it = _grammar.begin(); it != _grammar.end(); ++it) { // On parcourt tous les non terminaux
+                                                                                                                                            //               ou
+        std::vector<std::string> terminal_symbols; // Stocke tous les terminaux dont on va faire correspondre un remplacement dans la table  (ex :  E     E -> TE'         ici on met "ou")
+        std::vector<std::vector<std::string> > it_rules = it->second->getRules();
+
+        for (unsigned int i = 0; i < it_rules.size(); i++) {
+            if (it_rules[i].size() > 0) { // Normalement toujours vrai
+
+                if (isSymbol(it_rules[i][0])) { // Symbole non terminal (ex : E => TE' ici on lit T)
+                    std::map<std::string, Symbol*>::iterator temp = _grammar.find(it_rules[i][0]);
+                    std::vector<std::string> first_temp = temp->second->getFirst();
+
+                    for (unsigned int j = 0; j < first_temp.size(); j++) {
+                        if (!it->second->findIntoTable(first_temp[j])) // Si on n'a encore jamais défini de transformation pour cet index
+                            it->second->addIntoTable(first_temp[j], it_rules[i]); // On ajoute dans la map du symbole non terminal la transformation
+                                                                        // qui s'effectuera si on voit un symbole terminal identique à celui de l'index de la transformation
+                    }
+                }
+                else { // C'est un symbole terminal (ex : ou et vrai faux ! etc..)  OU le mot vide # !
+
+                    if (it_rules[i][0] == "#") {    // mot vide
+                        std::vector<std::string> follow = it->second->getFollow(); // on récupère les suivants du symbole non terminal (NT) pouvant donner le mot vide
+                        for (unsigned int j = 0; j < follow.size(); j++) {  // Pour chacun des symboles terminaux suivants le symbole NT
+                            if (!it->second->findIntoTable(follow[j])) {
+                                std::vector<std::string> temp_vec;
+                                temp_vec.push_back("#");
+                                it->second->addIntoTable(follow[j], temp_vec);  // On l'ajoute en tant qu'index dans la map du NT, et on définit la transformation à effectuer #
+                            }
+                        }
+                    }
+                    else {
+                        if (!it->second->findIntoTable(it_rules[i][0]))
+                            it->second->addIntoTable(it_rules[i][0], it_rules[i]);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void Analyser::displayTable() {
+
+     for (unsigned int i = 0; i < _orderedSymbols.size(); i++) {
+         std::map<std::string, Symbol*>::iterator it = _grammar.find(_orderedSymbols[i]);
+         if (it != _grammar.end()) {
+            std::cout << it->first << " a pour table : " << std::endl;
+            for (std::map<std::string, std::vector<std::string> >::iterator it_table = it->second->getTableBegin(); it_table != it->second->getTableEnd(); ++it_table) {
+                std::cout << "\t[" << it_table->first << "] => ";
+                for (unsigned int j = 0; j < it_table->second.size(); j++)
+                    std::cout << it_table->second[j] << " ";
+                std::cout << std::endl;
+            }
+            std::cout << std::endl << std::endl;
+         }
+     }
 }

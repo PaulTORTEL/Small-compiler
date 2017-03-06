@@ -50,3 +50,11 @@ std::vector<std::string> Symbol::getFirst() const {
 std::vector<std::string> Symbol::getFollow() const {
     return _follow;
 }
+
+void Symbol::addIntoTable(std::string index, std::vector<std::string> value) {
+    _table[index] = value;
+}
+
+bool Symbol::findIntoTable(std::string index) {
+    return _table.find(index) != _table.end();
+}

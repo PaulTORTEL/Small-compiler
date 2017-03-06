@@ -12,6 +12,8 @@ int main()
         analyser.displayFirst();
         analyser.setAllFollow();
         analyser.displayFollow();
+        analyser.createTable();
+        analyser.displayTable();
     }
     return 0;
 }
