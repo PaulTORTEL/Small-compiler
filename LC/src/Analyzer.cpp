@@ -249,12 +249,12 @@ void Analyzer::displayTable() {
 std::vector<std::string> Analyzer::split_words(std::string sentence){
 
     std::vector<std::string> returned_vector;
-    unsigned int i=0;
+    unsigned int i = 0;
     std::string temp;
 
-    while(i < sentence.length()){ //On parcoure la chaîne de caractère
+    while(i < sentence.length()){ //On parcourt la chaîne de caractère
 
-        if((sentence[i] < 90 && sentence[i] > 65)||(sentence[i] > 96 && sentence[i] < 122)){ //si c'est une lettre, on le met dans la string temporaire
+        if((sentence[i] > 65 && sentence[i] < 90)||(sentence[i] > 96 && sentence[i] < 122)){ //si c'est une lettre, on le met dans la string temporaire
             temp += sentence[i];
         }
         else if (sentence[i] == ' '){ //si c'est un espace, alors le mot est fini et on le stocke dans le vecteur
@@ -280,12 +280,7 @@ std::vector<std::string> Analyzer::split_words(std::string sentence){
 bool Analyzer::analyze(std::string sentence) {
 
     sentence += " $"; // On met à la fin du mot $ pour indiquer la fin de la phrase
-    ///std::vector<std::string> splited_sentence = split(sentence, ' ');
     std::vector<std::string> splited_sentence = split_words(sentence);
-    std::cout << "phrase : ";
-    for(unsigned int i=0; i < splited_sentence.size();i++){
-        std::cout << splited_sentence[i] << " ";
-    }
 
     std::stack<std::string> stack;
     stack.push("$");
