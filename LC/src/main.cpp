@@ -73,14 +73,16 @@ int main()
         std::string temp = (std::string)folder + "/" + *choice;
         if (analyzer.readGrammar(temp.c_str())) {
             analyzer.displayGrammar();
-            analyzer.setAllFirst();
-            analyzer.displayFirst();
-            analyzer.setAllFollow();
-            analyzer.displayFollow();
-            analyzer.createTable();
-            analyzer.displayTable();
-            std::cout << "/stop pour arreter la reconnaissance de mots" << std::endl;
-            analyzer.analyze_sentences();
+            if (analyzer.setAllFirst()) {
+                analyzer.displayFirst();
+                analyzer.setAllFollow();
+                analyzer.displayFollow();
+                if (analyzer.createTable()) {
+                    analyzer.displayTable();
+                    analyzer.analyze_sentences();
+                }
+            }
+
         }
         else {
             std::cerr << "Impossible de lire le fichier..." << std::endl;
