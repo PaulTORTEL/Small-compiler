@@ -41,8 +41,7 @@ class Symbol
         bool isIntoTable(std::string index);
         std::map<std::string, std::vector<std::string> >::iterator findIntoTable(std::string index);
 
-        std::map<std::string, std::vector<std::string> >::iterator getTableBegin();
-        std::map<std::string, std::vector<std::string> >::iterator getTableEnd();
+        std::map<std::string, std::vector<std::string> >& getTable();
 
 };
 
@@ -62,11 +61,8 @@ inline unsigned int Symbol::getFollowSize() {
     return _follow.size();
 }
 
-inline std::map<std::string, std::vector<std::string> >::iterator Symbol::getTableBegin() {
-    return _table.begin();
+inline std::map<std::string, std::vector<std::string> >& Symbol::getTable() {
+    return _table;
 }
 
-inline std::map<std::string, std::vector<std::string> >::iterator Symbol::getTableEnd() {
-    return _table.end();
-}
 #endif // SYMBOL_H
