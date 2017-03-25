@@ -66,6 +66,16 @@ bool Analyzer::verifiedInfiniteLoop(std::map<std::string, Symbol*>::iterator it,
 
 }
 
+
+/** TODO
+        VERIFIER QUE SI A = BA  ET QUE B = # alors PREMIER(A) = # + Premier(A)
+        VERIFIER LES FONCTIONS FindFirstIfEpsi, createTable, getFirstByGivenRule
+
+        On avait 2 pbs : la boucle Premier(A) = Premier(A) car B = #
+        la table qui se mettait pas bien car B = #B' => ne prenait que # et ne traitait pas les transformations pour les premiers de B'
+
+**/
+
 bool Analyzer::setAllFirst() {
 
     for (std::map<std::string, Symbol*>::iterator it = _grammar.begin(); it != _grammar.end(); ++it) {
@@ -78,25 +88,44 @@ bool Analyzer::setAllFirst() {
     for (std::map<std::string, Symbol*>::iterator it = _grammar.begin(); it != _grammar.end(); ++it) {
 
         if (it->second->getFirstSize() == 0) { // Si on n'a pas encore défini les premiers
-            findAndSetFirst(it); // On trouve et défini les premiers d'un symbole non terminal
+            std::vector<std::string> temp = findAndSetFirst(it); // On trouve et défini les premiers d'un symbole non terminal
+            if (temp.size() == 1 && temp[0] == "ERROR")
+                return false;
         }
     }
     return true;
 }
 
-std::vector<std::string> Analyzer::findFirstIfEpsilon(std::vector<std::string>& temp, const std::vector<std::string>& Symbols, const int index, const unsigned int position, const std::vector<std::vector<std::string> >& rules) {
+std::vector<std::string> Analyzer::findFirstIfEpsilon(std::vector<std::string>& temp,
+                                                      const int index, const unsigned int position,
+                                                      const std::vector<std::vector<std::string> >& rules,
+                                                      const std::string currentSymbolAnalyzed) {
 
     std::vector<std::string> null;
 
     for (unsigned int i = 0; i < temp.size(); i++) {
-            std::cout << "temp : " << temp[i] << std::endl;
+            //std::cout << "temp : " << temp[i] << std::endl;
             if (temp[i] == "#") {
                 std::vector<std::string> temp2 ;
+                //std::cout << "rules size: " << rules[index].size() << " et posi :" << position+1 << " et symb : " << rules[index][position] << " et le curr : " << currentSymbolAnalyzed << std::endl;
+                if ((rules[index].size() > (position+1)) && isSymbol(rules[index][position+1])) {
 
-                if ((rules[index].size() >= (position+1)) && isSymbol(rules[index][position+1])) {
+                    /// SECTION A VERIFIER ABSOLUMENT
+                    if (rules[index][position+1] == currentSymbolAnalyzed) { // On a trouvé A dans les règles de A (ex : A = BA, avec B = #)
+                        std::cout << "Erreur : on est arrive a chercher Premier(" << currentSymbolAnalyzed << ") en cherchant Premier("
+                        << rules[index][position+1] << ") car le signe precedent (" << rules[index][position] << ") donne le mot vide (#)" << std::endl;
+                        std::cout << "Impossible de determiner les premiers, il est donc impossible de continuer..." << std::endl;
+                        null.push_back("ERROR");
+                        return null;
+                    }
+                    /// vérifier que le vecteur null vide est bien capable d'empêcher de calculer le reste des premiers.. il faut que le programme s'arrête absolument
                     temp2 = findAndSetFirst(_grammar.find(rules[index][position+1]));
 
-                    std::vector<std::string> first_temp = findFirstIfEpsilon(temp2, Symbols, index, position+1, rules);
+                    std::vector<std::string> first_temp = findFirstIfEpsilon(temp2, index, position+1, rules, currentSymbolAnalyzed);
+
+                    if (first_temp.size() == 1 && first_temp[0] == "ERROR")
+                        return first_temp;
+
                     if (first_temp.size() > 0) {
 
                         if (!containsEpsilon(first_temp)) {
@@ -117,15 +146,16 @@ std::vector<std::string> Analyzer::findFirstIfEpsilon(std::vector<std::string>& 
                     }
                 }
 
-                else if (!isSymbol(rules[index][position+1])) { // Si jamais on a S = A a et que A = #, on étudie alors suivant de A (a)
+                else if ((rules[index].size() > (position+1)) && !isSymbol(rules[index][position+1])) { // Si jamais on a S = A a et que A = #, on étudie alors suivant de A (a)
                     temp2.push_back(rules[index][position+1]);
                     return temp2;
                 }
 
-                else if (rules[index].size() < position+1)
+                else if (rules[index].size() <= position+1)
                     return temp;
             }
         }
+
         return null;
 }
 
@@ -142,10 +172,21 @@ std::vector<std::string> Analyzer::findAndSetFirst(const std::map<std::string, S
 
     std::vector<std::string> finalSymbols = it->second->getFirstSymbolsFromRules(true);
     std::vector<std::string> Symbols = it->second->getFirstSymbolsFromRules(false);
+    std::vector<std::vector<std::string> > rules = it->second->getRules();
 
     if (Symbols.size() == 0) { // si les premiers sont uniquement des terminaux
         it->second->setFirst(finalSymbols); // On les sauvegarde
-        return finalSymbols;    // on retourne les terminaux (, + etc)
+
+        if (!containsEpsilon(finalSymbols)) // Il n'y a pas d'epsilon
+            return finalSymbols;    // on retourne les terminaux (, + etc)
+
+        else { // Il y a au moins 1 epsilon
+            for (unsigned int i = 0; i < finalSymbols.size(); i++) {
+                if (finalSymbols[i] == "#" && rules[i].size() > 1 && isSymbol(rules[i][1])) { // Si epsilon est suivi d'un NT
+                     Symbols.push_back(rules[i][1]);
+                }
+            }
+        }
     }
 
 
@@ -158,13 +199,18 @@ std::vector<std::string> Analyzer::findAndSetFirst(const std::map<std::string, S
             first.push_back(finalSymbols[i]);
     }
 
-    std::vector<std::vector<std::string> > rules = it->second->getRules();
+
 
     for (unsigned int i = 0; i < Symbols.size(); i++) {
-
         temp = findAndSetFirst(_grammar.find(Symbols[i])); /// On ré appelle la même fonction avec les non terminaux (Premier(E) = Premier(T) donc on envoie T pour calculer ses premiers)
 
-        std::vector<std::string> temp2 = findFirstIfEpsilon(temp, Symbols, i, 0, rules);
+        if (temp.size() == 1 && temp[0] == "ERROR")
+            return temp;
+
+        std::vector<std::string> temp2 = findFirstIfEpsilon(temp, i, 0, rules, it->first);
+
+        if (temp2.size() == 1 && temp2[0] == "ERROR")
+            return temp2;
 
         if (!containsEpsilon(temp2)) {
             for (std::vector<std::string>::iterator it = temp.begin(); it != temp.end(); ++it) {
@@ -176,9 +222,7 @@ std::vector<std::string> Analyzer::findAndSetFirst(const std::map<std::string, S
         }
 
         for (unsigned int j = 0; j < temp2.size(); j++) {
-            std::cout << "temp 2 " << temp2.size() <<" " << temp.size() << std::endl;
             if (!contains(temp, temp2[j])) { /// Si on n'a pas déjà ajouté ce symbole terminal (, + ou et etc.)
-                std::cout << "ok : " << temp2[j] << std::endl;
                 temp.push_back(temp2[j]);
             }
         }
@@ -299,6 +343,38 @@ void Analyzer::displayFollow() {
     }
 }
 
+//Fonction A VERIFIER
+std::vector<std::string> Analyzer::getFirstGivenByARule(const std::vector<std::vector<std::string> > it_rules, const int index, const int position) {
+
+    std::map<std::string, Symbol*>::iterator temp = _grammar.find(it_rules[index][position]);
+    std::vector<std::string> first_temp = temp->second->getFirst();
+
+    if (containsEpsilon(first_temp)) {
+
+         std::vector<std::string> temp2 = findFirstIfEpsilon(first_temp, index, position, it_rules, temp->first);
+
+        if (temp2.size() == 1 && temp2[0] == "ERROR")
+            return temp2;
+
+         if (!containsEpsilon(temp2)) {
+            for (std::vector<std::string>::iterator it_temp = first_temp.begin(); it_temp != first_temp.end(); ++it_temp) {
+                if (*it_temp == "#") {
+                    first_temp.erase(it_temp);
+                    it_temp--;
+                }
+            }
+        }
+        for (unsigned int j = 0; j < temp2.size(); j++) {
+            if (!contains(first_temp, temp2[j])) { /// Si on n'a pas déjà ajouté ce symbole terminal (, + ou et etc.)
+                first_temp.push_back(temp2[j]);
+            }
+        }
+
+    }
+
+    return first_temp;
+}
+
 bool Analyzer::createTable() {
 
     for (std::map<std::string, Symbol*>::iterator it = _grammar.begin(); it != _grammar.end(); ++it) { // On parcourt tous les non terminaux
@@ -312,26 +388,16 @@ bool Analyzer::createTable() {
 
                 if (isSymbol(it_rules[i][0])) { // Symbole non terminal (ex : E => TE' ici on lit T)
 
-                    std::map<std::string, Symbol*>::iterator temp = _grammar.find(it_rules[i][0]);
-                    std::vector<std::string> first_temp = temp->second->getFirst();
+                    std::vector<std::string> first_temp = getFirstGivenByARule(it_rules, i, 0); // Renvoie peut être un epsilon dans le vecteur
 
-                    if (containsEpsilon(first_temp)) {
-                         std::vector<std::string> temp2 = findFirstIfEpsilon(first_temp, Symbols, i, 0, it_rules);
+                    if (first_temp.size() == 1 && first_temp[0] == "ERROR")
+                        return false;
 
-                         if (!containsEpsilon(temp2)) {
-                            for (std::vector<std::string>::iterator it_temp = first_temp.begin(); it_temp != first_temp.end(); ++it_temp) {
-                                if (*it_temp == "#") {
-                                    first_temp.erase(it_temp);
-                                    it_temp--;
-                                }
-                            }
+                    for (std::vector<std::string>::iterator it_temp = first_temp.begin(); it_temp != first_temp.end(); ++it_temp) { // Donc on le cherche et on l'élimine
+                        if (*it_temp == "#") {
+                            first_temp.erase(it_temp);
+                            it_temp--;
                         }
-                        for (unsigned int j = 0; j < temp2.size(); j++) {
-                            if (!contains(first_temp, temp2[j])) { /// Si on n'a pas déjà ajouté ce symbole terminal (, + ou et etc.)
-                                first_temp.push_back(temp2[j]);
-                            }
-                        }
-
                     }
 
                     for (unsigned int j = 0; j < first_temp.size(); j++) {
@@ -352,6 +418,40 @@ bool Analyzer::createTable() {
                                 it->second->addIntoTable(follow[j], temp_vec);  // On l'ajoute en tant qu'index dans la map du NT, et on définit la transformation à effectuer #
                             }
                         }
+
+                        if (it_rules[i].size() > 1) {  // PARTIE A VERIFIER
+                            if (isSymbol(it_rules[i][1])) {
+
+                                std::vector<std::string> first_temp = getFirstGivenByARule(it_rules, i, 1);
+
+                                if (first_temp.size() == 1 && first_temp[0] == "ERROR")
+                                    return false;
+
+                                for (std::vector<std::string>::iterator it_temp = first_temp.begin(); it_temp != first_temp.end(); ++it_temp) { // Donc on le cherche et on l'élimine
+                                    if (*it_temp == "#") {
+                                        first_temp.erase(it_temp);
+                                        it_temp--;
+                                    }
+                                }
+
+                                for (unsigned int j = 0; j < first_temp.size(); j++) {
+
+                                    if (!it->second->isIntoTable(first_temp[j])) // Si on n'a encore jamais défini de transformation pour cet index
+                                        it->second->addIntoTable(first_temp[j], it_rules[i]); // On ajoute dans la map du symbole non terminal la transformation
+                                                                                    // qui s'effectuera si on voit un symbole terminal identique à celui de l'index de la transformation
+                                }
+                            }
+                            else {
+                                if (!it->second->isIntoTable(it_rules[i][1])) // Aucun transformation enregistrée à la ligne du symbole NT, colonne du symbole T
+                                    it->second->addIntoTable(it_rules[i][1], it_rules[i]);  // (ex : E  et a => TE'  TE' n'est pas encore enregistré)
+
+                                else { // Transformation déjà enregistrée ! Donc à ce stade il y a ambigüité dans la syntaxe (ex : A => a | aB) : 2 règles donnent a
+                                    std::cout << "Detection d'une ambiguite dans la syntaxe de " << it->first << ". Impossible de continuer..." << std::endl;
+                                    return false;
+                                }
+                            }
+                        }
+
                     }
                     else {
                         if (!it->second->isIntoTable(it_rules[i][0])) // Aucun transformation enregistrée à la ligne du symbole NT, colonne du symbole T
