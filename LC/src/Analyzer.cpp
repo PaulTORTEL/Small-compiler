@@ -309,7 +309,7 @@ void Analyzer::displayTable() { // Code pas très important, on récupère les t
         std::vector<std::string> temp_next = it->second->getFollow();
         for (unsigned int j = 0; j < temp_next.size(); j++) {
             if (!isSymbol(temp_next[j])) {
-                if (std::find(already_counted.begin(), already_counted.end(), temp_next[j]) == already_counted.end() && temp_first[j] != "#")
+                if (temp_next[j] != "#" && std::find(already_counted.begin(), already_counted.end(), temp_next[j]) == already_counted.end())
                     already_counted.push_back(temp_next[j]);
             }
         }
