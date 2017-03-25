@@ -22,7 +22,7 @@ bool Analyzer::readGrammar(const char* filename)
         {
             std::cout << "Erreur : " << line << std::endl;
             std::cout << "[Symbole] = [Grammaire du symbole]" << std::endl;
-            std::cout << "Il doit y avoir un et un seul symbole à gauche." << std::endl;
+            std::cout << "Il doit y avoir un et un seul symbole Ã  gauche." << std::endl;
             return false;
         }
 
@@ -121,19 +121,9 @@ bool Analyzer::readGrammar(const char* filename)
 
         std::cout << "==== Lecture de [ " << left[0] << " ] ====" << std::endl;
 
-        int recursivity = 0;
-
-        for (unsigned int i = 0; i < rules.size(); i++)
+        if (rules[0][0] == left[0] && rules[0].size() != 1)
         {
-            if (rules[i][0] == left[0])
-            {
-                recursivity++;
-            }
-        }
-
-        if (recursivity > 0 && rules[0].size() != 1)
-        {
-            std::cout << "Recursivite a gauche detectee dans " << recursivity << " regle(s)" << std::endl;
+            std::cout << "Recursivite a gauche detectee!" << std::endl;
             std::cout << "Les regles du symbole [ " << left[0] << " ] seront modifiees." << std::endl;
             std::cout << "Le symbole [ " << left[0] << "' ] sera cree." << std::endl;
 
@@ -148,36 +138,42 @@ bool Analyzer::readGrammar(const char* filename)
                 return false;
             }
 
+            std::vector<std::string> cloned_first_rule = rules[0];
+
+            cloned_first_rule.erase(cloned_first_rule.begin() + 0);
+
+
             Symbol *symb = new Symbol(left[0]);
             Symbol *new_symb = new Symbol(left[0] + "'");
 
-            for (unsigned int i = 0; i < rules.size(); i++)
+            for (unsigned int i = 1; i < rules.size(); i++)
             {
-                if (rules[i][0] == left[0])
-                {
-                    std::vector<std::string> temp_symb;
+                std::vector<std::string> temp_symb;
 
-                    for (unsigned int k = 1; k < rules[i].size(); k++)
-                    {
-                         temp_symb.push_back(rules[i][k]);
-                    }
-                    temp_symb.push_back(left[0] + "'");
-                    new_symb->addRule(temp_symb);
-                }
-                else
+                for (unsigned int j = 0; j < rules[i].size(); j++)
                 {
-                    std::vector<std::string> temp_symb;
-                    for (unsigned int k = 0; k < rules[i].size(); k++)
-                    {
-                         temp_symb.push_back(rules[i][k]);
-                    }
-                    temp_symb.push_back(left[0] + "'");
-                    symb->addRule(temp_symb);
+                    temp_symb.push_back(rules[i][j]);
                 }
+
+                temp_symb.push_back(left[0] + "'");
+
+                symb->addRule(temp_symb);
             }
-             std::vector<std::string> temp_symb;
-             temp_symb.push_back("#");
-             new_symb->addRule(temp_symb);
+
+
+            std::vector<std::string> temp_new_symb_rule_left;
+            std::vector<std::string> temp_new_symb_rule_right;
+
+            for (unsigned int i = 0; i < cloned_first_rule.size(); i++)
+            {
+                temp_new_symb_rule_left.push_back(cloned_first_rule[i]);
+            }
+
+            temp_new_symb_rule_left.push_back(left[0] + "'");
+            temp_new_symb_rule_right.push_back("#");
+
+            new_symb->addRule(temp_new_symb_rule_left);
+            new_symb->addRule(temp_new_symb_rule_right);
 
             _grammar[left[0]] = symb;
             _orderedSymbols.push_back(left[0]);
