@@ -4,6 +4,7 @@
 
 bool Analyzer::readGrammar(const char* filename)
 {
+
     std::ifstream input( filename );
 
     for( std::string line; getline( input, line ); )
@@ -66,6 +67,57 @@ bool Analyzer::readGrammar(const char* filename)
         }
 
 
+        for (unsigned int i1 = 0; i1 < rules.size(); i1++)
+        {
+            for (unsigned int i2 = 0; i2 < rules[i1].size(); i2++)
+            {
+                if (rules[i1][i2].size() == 0)
+                {
+                    std::cout << "Erreur : \n" << line << std::endl;
+                    for (unsigned int f = 0; f < line.size() ; f++)
+                    {
+                        if (line[f] == ' ')
+                        {
+                            std::cout << "E";
+                        }
+                        else
+                        {
+                            std::cout << "X";
+                        }
+                    }
+                    std::cout << std::endl;
+                    std::cout << "[Symbole] = [Regle] [Regle] ... [Regle]" << std::endl;
+                    std::cout << "[Regle] a pour format : [Symb] [Symb] [Symb]" << std::endl;
+                    std::cout << "Syntaxe incorrecte." << std::endl;
+                    return false;
+                }
+
+                for (unsigned int i3 = 0; i3 < rules[i1][i2].size(); i3++)
+                {
+                    if (rules[i1][i2][i3] == ' ' || rules[i1][i2][i3] == '|' || rules[i1][i2][i3] == '\t' )
+                    {
+                        std::cout << "Erreur : \n" << line << std::endl;
+                        for (unsigned int f = 0; f < line.size() ; f++)
+                        {
+                            if (line[f] == ' ')
+                            {
+                                std::cout << "E";
+                            }
+                            else
+                            {
+                                std::cout << "X";
+                            }
+                        }
+                        std::cout << std::endl;
+                        std::cout << "[Symbole] = [Regle] [Regle] ... [Regle]" << std::endl;
+                        std::cout << "[Regle] a pour format : [Symb] [Symb] [Symb]" << std::endl;
+                        std::cout << "Syntaxe incorrecte." << std::endl;
+                        return false;
+                    }
+                }
+            }
+
+        }
 
         std::cout << "==== Lecture de [ " << left[0] << " ] ====" << std::endl;
 
