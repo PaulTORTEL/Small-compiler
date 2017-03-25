@@ -22,8 +22,12 @@ class Analyzer
     std::vector<std::string> findAndSetFirst(const std::map<std::string, Symbol*>::iterator it); // retourne la liste de tous les symboles terminaux (utilisé dans la fonction setFirst() )
     std::vector<std::string> findAndSetFollow(const std::map<std::string, Symbol*>::iterator it);
 
+    std::vector<std::string> findFirstIfEpsilon(std::vector<std::string>& temp, const std::vector<std::string>& Symbols, const int index, const unsigned int position, const std::vector<std::vector<std::string> >& rules);
+
     std::vector<std::string> split_words(std::string sentence); // utilisé seulement par analyze(), sert à découper une phrase pour pouvoir l'analyser plus facilement
                                                                 // (ex : vrai ou !(faux et !vrai) => vrai ou ! ( faux et ! vrai )
+
+    bool containsEpsilon(const std::vector<std::string> temp);
 
     public:
         Analyzer();
