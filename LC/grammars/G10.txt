@@ -1,4 +1,8 @@
-S = A B | - A B
-A = C | C + | C -
-B = # | A B
-C = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+S = A
+A = + I | - I | I
+I = B | . D
+B = 0 G | 1 G | 2 G | 3 G | 4 G | 5 G | 6 G | 7 G | 8 G | 9 G
+G = 0 G | 1 G | 2 G | 3 G | 4 G | 5 G | 6 G | 7 G | 8 G | 9 G | C | #
+C = . E
+D = 0 E | 1 E | 2 E | 3 E | 4 E | 5 E | 6 E | 7 E | 8 E | 9 E
+E = 0 E | 1 E | 2 E | 3 E | 4 E | 5 E | 6 E | 7 E | 8 E | 9 E | #

@@ -35,6 +35,7 @@ std::vector<std::string> Symbol::getFirstSymbolsFromRules(const bool finalSymbol
             }
         }
     }
+
     return firstSymbols;
 }
 

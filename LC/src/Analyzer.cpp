@@ -44,7 +44,13 @@ bool Analyzer::verifiedInfiniteLoop(std::map<std::string, Symbol*>::iterator it,
         return false;
     }
 
-    std::vector<std::string> nextSymbols = it->second->getFirstSymbolsFromRules(false);
+    std::vector<std::string> temp_nextSymb = it->second->getFirstSymbolsFromRules(false);
+    std::vector<std::string> nextSymbols;
+
+    for (unsigned int i = 0; i < temp_nextSymb.size(); i++) {
+        if (std::find(nextSymbols.begin(), nextSymbols.end(), temp_nextSymb[i]) == nextSymbols.end())
+            nextSymbols.push_back(temp_nextSymb[i]);
+    }
 
     path.push_back(it->first);
 
@@ -68,7 +74,6 @@ bool Analyzer::verifiedInfiniteLoop(std::map<std::string, Symbol*>::iterator it,
 
 
 /** TODO
-        VERIFIER QUE SI A = BA  ET QUE B = # alors PREMIER(A) = # + Premier(A)
         VERIFIER LES FONCTIONS FindFirstIfEpsi, createTable, getFirstByGivenRule
 
         On avait 2 pbs : la boucle Premier(A) = Premier(A) car B = #
@@ -88,6 +93,7 @@ bool Analyzer::setAllFirst() {
     for (std::map<std::string, Symbol*>::iterator it = _grammar.begin(); it != _grammar.end(); ++it) {
 
         if (it->second->getFirstSize() == 0) { // Si on n'a pas encore défini les premiers
+
             std::vector<std::string> temp = findAndSetFirst(it); // On trouve et défini les premiers d'un symbole non terminal
             if (temp.size() == 1 && temp[0] == "ERROR")
                 return false;
@@ -104,7 +110,7 @@ std::vector<std::string> Analyzer::findFirstIfEpsilon(std::vector<std::string>& 
     std::vector<std::string> null;
 
     for (unsigned int i = 0; i < temp.size(); i++) {
-            //std::cout << "temp : " << temp[i] << std::endl;
+            //std::cout << "temp : " << temp[i] << " et le curr : " << currentSymbolAnalyzed << " index : " << index << std::endl;
             if (temp[i] == "#") {
                 std::vector<std::string> temp2 ;
                 //std::cout << "rules size: " << rules[index].size() << " et posi :" << position+1 << " et symb : " << rules[index][position] << " et le curr : " << currentSymbolAnalyzed << std::endl;
@@ -170,6 +176,14 @@ bool Analyzer::containsEpsilon(const std::vector<std::string> temp) {
 
 std::vector<std::string> Analyzer::findAndSetFirst(const std::map<std::string, Symbol*>::iterator it) {
 
+    std::vector<std::string> temp; /// va récupérer les symboles terminaux renvoyé par la récursion ex : E = T+A => renverra premier(T)
+
+    if (it == _grammar.end()) {
+        std::cout << "Un symbole est present dans une regle mais n'a aucune regle ! Impossible de continuer..." << std::endl;
+        temp.push_back("ERROR");
+        return temp;
+    }
+
     std::vector<std::string> finalSymbols = it->second->getFirstSymbolsFromRules(true);
     std::vector<std::string> Symbols = it->second->getFirstSymbolsFromRules(false);
     std::vector<std::vector<std::string> > rules = it->second->getRules();
@@ -190,7 +204,7 @@ std::vector<std::string> Analyzer::findAndSetFirst(const std::map<std::string, S
     }
 
 
-    std::vector<std::string> temp; /// va récupérer les symboles terminaux renvoyé par la récursion ex : E = T+A => renverra premier(T)
+
     std::vector<std::string> first; /// va stocker tous les symboles terminaux
 
     for (unsigned int i = 0; i < finalSymbols.size(); i++) {
@@ -199,15 +213,21 @@ std::vector<std::string> Analyzer::findAndSetFirst(const std::map<std::string, S
             first.push_back(finalSymbols[i]);
     }
 
-
-
     for (unsigned int i = 0; i < Symbols.size(); i++) {
         temp = findAndSetFirst(_grammar.find(Symbols[i])); /// On ré appelle la même fonction avec les non terminaux (Premier(E) = Premier(T) donc on envoie T pour calculer ses premiers)
 
         if (temp.size() == 1 && temp[0] == "ERROR")
             return temp;
 
-        std::vector<std::string> temp2 = findFirstIfEpsilon(temp, i, 0, rules, it->first);
+        unsigned int symb_position_in_rules = 0;
+        for (unsigned int rules_it = 0; rules_it < rules.size(); rules_it++) {
+            if (rules[rules_it].size() > 0 && rules[rules_it][0] == Symbols[i]) { // 1ere partie normalement tjr vraie, la 2ieme teste si on a trouvé la position du symbole
+                symb_position_in_rules = rules_it;
+                break;
+            }
+        }
+
+        std::vector<std::string> temp2 = findFirstIfEpsilon(temp, symb_position_in_rules, 0, rules, it->first);
 
         if (temp2.size() == 1 && temp2[0] == "ERROR")
             return temp2;
