@@ -197,7 +197,7 @@ bool Analyzer::readGrammar(const char* filename)
             {
                 symb->addRule(rules[i]);
             }
-            std::cout << " la grammar : " << left[0]  << " prend " << symb << std::endl;
+
             _grammar[left[0]] = symb;
             _orderedSymbols.push_back(left[0]);
 

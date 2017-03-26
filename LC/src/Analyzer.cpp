@@ -490,7 +490,7 @@ bool Analyzer::createTable() {
 }
 
 void Analyzer::displayTable() { // Code pas très important, on récupère les tailles max des Terminaux, Non Terminaux et on affiche le tableau en prenant ça en compte
-
+/*
      for (unsigned int i = 0; i < _orderedSymbols.size(); i++) {
          std::map<std::string, Symbol*>::iterator it = _grammar.find(_orderedSymbols[i]);
          if (it != _grammar.end()) {
@@ -506,7 +506,7 @@ void Analyzer::displayTable() { // Code pas très important, on récupère les t
          }
      }
      std::cout << std::endl << std::endl;
-
+*/
     std::vector<std::string> already_counted;
     unsigned int count_max_length_rules = 0;
     unsigned int count_max_length_non_terminal = 0;
@@ -537,17 +537,14 @@ void Analyzer::displayTable() { // Code pas très important, on récupère les t
 
         for (unsigned int i = 0; i < temp_rules.size(); i++) {
             for (unsigned int j = 0; j < temp_rules[i].size(); j++) {
-                if (isSymbol(temp_rules[i][j])) {
-                    if (count_max_length_non_terminal < temp_rules[i][j].length())
-                        count_max_length_non_terminal = temp_rules[i][j].length();
-                }
                 temp_count_max += temp_rules[i][j].length();
             }
             if (count_max_length_rules < temp_count_max)
                 count_max_length_rules = temp_count_max;
+            temp_count_max = 0;
         }
     }
-    //std::cout << "ok le nb de symb T : " << already_counted.size() << " le nb de char NT : " << count_max_length_non_terminal << " le nb de char de regle : " << count_max_length_rules << std::endl;
+
     std::sort(already_counted.begin(), already_counted.end());
 
     for (unsigned int i = 0; i < count_max_length_non_terminal+1; i++)
