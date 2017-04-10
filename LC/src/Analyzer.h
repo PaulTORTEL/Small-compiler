@@ -41,8 +41,8 @@ class Analyzer
         void displayGrammar();
 
         bool verifiedInfiniteLoop(std::map<std::string, Symbol*>::iterator it, std::vector<std::string>& path);
-        bool setAllFirst(); // Fait appel à findAndReturnFirst
-        void setAllFollow(); // Non défini
+        bool setAllFirst(); // Fait appel à findAndSetFirst
+        void setAllFollow(); // Fait appel à findAndSetFollow
         bool createTable(); // Créé la table de l'analyseur qui servira à la détection d'un mot
 
         void displayFirst();
