@@ -705,7 +705,7 @@ bool Analyzer::analyze(std::string sentence) {
             }
         }
     }
-    return true; // Mot reconnu
+    return true; // Phrase reconnue
 }
 
 void Analyzer::analyze_sentences() {
@@ -720,10 +720,10 @@ void Analyzer::analyze_sentences() {
                 break;
 
             if (analyze(sentence))
-                std::cout << "\tMot reconnu !" << std::endl;
+                std::cout << "\tPhrase reconnue !" << std::endl;
 
             else
-                std::cout << "\tMot non reconnu..." << std::endl;
+                std::cout << "\tPhrase non reconnue..." << std::endl;
 
             std::cout << std::endl;
     }
