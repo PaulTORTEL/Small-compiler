@@ -296,7 +296,7 @@ std::vector<std::string> Analyzer::findAndSetFollow(const std::map<std::string, 
 
                         for(unsigned int k = 0; k < first.size();k++){ // on parcourt la liste des premiers
                             if(first[k] == "#"){ // si on trouve le mot vide
-                                std::vector<std::string> temp = findAndSetFollow(_grammar.find(rules[i][j])); // alors on cherche les suivants du symbole contenant la règle
+                                std::vector<std::string> temp = findAndSetFollow(_grammar.find(rules[i][j])); // alors on cherche les suivants du symbole suivant
 
                                 for (unsigned int i = 0; i < temp.size(); i++) {
                                     if (!contains(follow, temp[i])) {
@@ -389,14 +389,31 @@ bool Analyzer::createTable() {
 
     for (std::map<std::string, Symbol*>::iterator it = _grammar.begin(); it != _grammar.end(); ++it) { // On parcourt tous les non terminaux
 
-        std::vector<std::vector<std::string> > it_rules = it->second->getRules();
-        std::vector<std::string> Symbols = it->second->getFirstSymbolsFromRules(false);
+        std::vector<std::vector<std::string> > it_rules = it->second->getRules(); /* on récupère toutes les règles du symbole actuel */
+        std::vector<std::string> Symbols = it->second->getFirstSymbolsFromRules(false); /* récupère tous les symboles terminaux qui commencent une règle */
+
+        /* ===============================*/
+
+        for (int i = 0; i < it_rules.size(); i++) {
+            if(it_rules[i][0] == "#" && it_rules[i].size() > 1){
+                std::vector<std::string>::iterator it_temp = it_rules[i].begin();
+                it_rules[i].erase(it_temp);
+            }
+        }
+
+        /* =============================== */
 
         for (unsigned int i = 0; i < it_rules.size(); i++) {
 
             if (it_rules[i].size() > 0) { // Normalement toujours vrai
 
                 if (isSymbol(it_rules[i][0])) { // Symbole non terminal (ex : E => TE' ici on lit T)
+
+                     /* ===============================*/
+
+                    bool containsEmptyWord;
+
+                     /* ===============================*/
 
                     std::vector<std::string> first_temp = getFirstGivenByARule(it_rules, i, 0); // Renvoie peut être un epsilon dans le vecteur
 
@@ -407,8 +424,29 @@ bool Analyzer::createTable() {
                         if (*it_temp == "#") {
                             first_temp.erase(it_temp);
                             it_temp--;
+
+                             /* ===============================*/
+
+                            containsEmptyWord = true;
+
+                             /* ===============================*/
+
                         }
                     }
+
+                     /* ===============================*/
+
+                    if(containsEmptyWord){
+                        std::vector<std::string> it_follow = it->second->getFollow();
+                        for (unsigned int j = 0; j < it_follow.size(); j++) {
+                            if (!contains(first_temp, it_follow[j])) { /// Si on n'a pas déjà ajouté ce symbole terminal (, + ou et etc.)
+                                first_temp.push_back(it_follow[j]);
+                            }
+                        }
+                    }
+
+                     /* ===============================*/
+
 
                     for (unsigned int j = 0; j < first_temp.size(); j++) {
 
@@ -429,7 +467,9 @@ bool Analyzer::createTable() {
                             }
                         }
 
-                        if (it_rules[i].size() > 1) {  // PARTIE A VERIFIER
+                        /* =============================== */
+
+                        /*if (it_rules[i].size() > 1) {  // PARTIE A VERIFIER
                             if (isSymbol(it_rules[i][1])) {
 
                                 std::vector<std::string> first_temp = getFirstGivenByARule(it_rules, i, 1);
@@ -460,8 +500,10 @@ bool Analyzer::createTable() {
                                     return false;
                                 }
                             }
-                        }
+                        }*/
 
+
+                    /* =============================== */
                     }
                     else {
                         if (!it->second->isIntoTable(it_rules[i][0])) // Aucun transformation enregistrée à la ligne du symbole NT, colonne du symbole T

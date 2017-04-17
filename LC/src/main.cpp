@@ -37,7 +37,7 @@ const std::string* ChooseGrammar(const std::vector<std::string>& grammars) {
         std::cin >> choice;
         if(std::cin.fail()) {
             std::cin.clear();
-            std::cin.ignore(INT_MAX, '\n');
+//            std::cin.ignore(INT_MAX, '\n');
 
         } else {
             std::cin.ignore(1, '\n');
