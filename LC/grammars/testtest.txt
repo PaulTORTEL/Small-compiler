@@ -1,4 +1,0 @@
-A = T | c
-T = B + | -
-B = a | b
-H = vrai

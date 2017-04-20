@@ -392,16 +392,12 @@ bool Analyzer::createTable() {
         std::vector<std::vector<std::string> > it_rules = it->second->getRules(); /* on récupère toutes les règles du symbole actuel */
         std::vector<std::string> Symbols = it->second->getFirstSymbolsFromRules(false); /* récupère tous les symboles terminaux qui commencent une règle */
 
-        /* ===============================*/
-
-        for (int i = 0; i < it_rules.size(); i++) {
+        for (unsigned int i = 0; i < it_rules.size(); i++) {
             if(it_rules[i][0] == "#" && it_rules[i].size() > 1){
                 std::vector<std::string>::iterator it_temp = it_rules[i].begin();
                 it_rules[i].erase(it_temp);
             }
         }
-
-        /* =============================== */
 
         for (unsigned int i = 0; i < it_rules.size(); i++) {
 
@@ -409,11 +405,7 @@ bool Analyzer::createTable() {
 
                 if (isSymbol(it_rules[i][0])) { // Symbole non terminal (ex : E => TE' ici on lit T)
 
-                     /* ===============================*/
-
                     bool containsEmptyWord;
-
-                     /* ===============================*/
 
                     std::vector<std::string> first_temp = getFirstGivenByARule(it_rules, i, 0); // Renvoie peut être un epsilon dans le vecteur
 
@@ -425,16 +417,9 @@ bool Analyzer::createTable() {
                             first_temp.erase(it_temp);
                             it_temp--;
 
-                             /* ===============================*/
-
                             containsEmptyWord = true;
-
-                             /* ===============================*/
-
                         }
                     }
-
-                     /* ===============================*/
 
                     if(containsEmptyWord){
                         std::vector<std::string> it_follow = it->second->getFollow();
@@ -444,9 +429,6 @@ bool Analyzer::createTable() {
                             }
                         }
                     }
-
-                     /* ===============================*/
-
 
                     for (unsigned int j = 0; j < first_temp.size(); j++) {
 
@@ -467,43 +449,6 @@ bool Analyzer::createTable() {
                             }
                         }
 
-                        /* =============================== */
-
-                        /*if (it_rules[i].size() > 1) {  // PARTIE A VERIFIER
-                            if (isSymbol(it_rules[i][1])) {
-
-                                std::vector<std::string> first_temp = getFirstGivenByARule(it_rules, i, 1);
-
-                                if (first_temp.size() == 1 && first_temp[0] == "ERROR")
-                                    return false;
-
-                                for (std::vector<std::string>::iterator it_temp = first_temp.begin(); it_temp != first_temp.end(); ++it_temp) { // Donc on le cherche et on l'élimine
-                                    if (*it_temp == "#") {
-                                        first_temp.erase(it_temp);
-                                        it_temp--;
-                                    }
-                                }
-
-                                for (unsigned int j = 0; j < first_temp.size(); j++) {
-
-                                    if (!it->second->isIntoTable(first_temp[j])) // Si on n'a encore jamais défini de transformation pour cet index
-                                        it->second->addIntoTable(first_temp[j], it_rules[i]); // On ajoute dans la map du symbole non terminal la transformation
-                                                                                    // qui s'effectuera si on voit un symbole terminal identique à celui de l'index de la transformation
-                                }
-                            }
-                            else {
-                                if (!it->second->isIntoTable(it_rules[i][1])) // Aucun transformation enregistrée à la ligne du symbole NT, colonne du symbole T
-                                    it->second->addIntoTable(it_rules[i][1], it_rules[i]);  // (ex : E  et a => TE'  TE' n'est pas encore enregistré)
-
-                                else { // Transformation déjà enregistrée ! Donc à ce stade il y a ambigüité dans la syntaxe (ex : A => a | aB) : 2 règles donnent a
-                                    std::cout << "Detection d'une ambiguite dans la syntaxe de " << it->first << ". Impossible de continuer..." << std::endl;
-                                    return false;
-                                }
-                            }
-                        }*/
-
-
-                    /* =============================== */
                     }
                     else {
                         if (!it->second->isIntoTable(it_rules[i][0])) // Aucun transformation enregistrée à la ligne du symbole NT, colonne du symbole T
@@ -522,7 +467,9 @@ bool Analyzer::createTable() {
 }
 
 void Analyzer::displayTable() { // Code pas très important, on récupère les tailles max des Terminaux, Non Terminaux et on affiche le tableau en prenant ça en compte
-/*
+
+    std::cout << "\tTable d'analyse : " << std::endl;
+/* Autre manière d'afficher (pas sous forme d'un tableau)
      for (unsigned int i = 0; i < _orderedSymbols.size(); i++) {
          std::map<std::string, Symbol*>::iterator it = _grammar.find(_orderedSymbols[i]);
          if (it != _grammar.end()) {
