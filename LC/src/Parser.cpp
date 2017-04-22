@@ -131,7 +131,7 @@ bool Analyzer::readGrammar(const char* filename)
             }
         }
 
-        if (recursivity > 0 && rules[0].size() != 1)
+        if (recursivity > 0)
         {
             std::cout << "Recursivite a gauche detectee dans " << recursivity << " regle(s)" << std::endl;
             std::cout << "Les regles du symbole [ " << left[0] << " ] seront modifiees." << std::endl;
@@ -155,11 +155,23 @@ bool Analyzer::readGrammar(const char* filename)
             {
                 if (rules[i][0] == left[0])
                 {
+                    if (rules[i].size() == 1)
+                    {
+                        std::cout << "Erreur, regle non valide : " << left[0] << " = ";
+
+                        for (unsigned int cpt = 0; cpt < rules[i].size(); cpt++)
+                        {
+                            std::cout << rules[i][cpt] << " ";
+                        }
+                        std::cout << std::endl;
+                        std::cout << "Cette regle ne peut pas etre modifiee pour eliminer la recursivite a gauche" << std::endl;
+                        return false;
+                    }
                     std::vector<std::string> temp_symb;
 
                     for (unsigned int k = 1; k < rules[i].size(); k++)
                     {
-                         temp_symb.push_back(rules[i][k]);
+                        temp_symb.push_back(rules[i][k]);
                     }
                     temp_symb.push_back(left[0] + "'");
                     new_symb->addRule(temp_symb);
@@ -169,15 +181,15 @@ bool Analyzer::readGrammar(const char* filename)
                     std::vector<std::string> temp_symb;
                     for (unsigned int k = 0; k < rules[i].size(); k++)
                     {
-                         temp_symb.push_back(rules[i][k]);
+                        temp_symb.push_back(rules[i][k]);
                     }
                     temp_symb.push_back(left[0] + "'");
                     symb->addRule(temp_symb);
                 }
             }
-             std::vector<std::string> temp_symb;
-             temp_symb.push_back("#");
-             new_symb->addRule(temp_symb);
+            std::vector<std::string> temp_symb;
+            temp_symb.push_back("#");
+            new_symb->addRule(temp_symb);
 
             _grammar[left[0]] = symb;
             _orderedSymbols.push_back(left[0]);
